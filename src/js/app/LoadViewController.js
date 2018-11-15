@@ -92,4 +92,4 @@ var LoadViewController = function () {
     _private.init();
 };
 
-module.exports = LoadViewController;
+export default LoadViewController;

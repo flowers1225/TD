@@ -35,4 +35,4 @@ var IndexViewController = function () {
     _private.init();
 };
 
-module.exports = IndexViewController;
+export default IndexViewController;

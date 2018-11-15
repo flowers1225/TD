@@ -321,4 +321,4 @@ Preload.LoadKeyImgs = (function () {
     return fn;
 })();
 
-module.exports = Preload;
+export default Preload;

@@ -4,6 +4,7 @@
 const path = require('path');
 const merge = require('webpack-merge');
 const webpack = require('webpack');
+const sane = require('sane');
 
 // webpack plugin
 const Dashboard = require('webpack-dashboard');
@@ -20,31 +21,34 @@ const base = require('./webpack.config.base.js');
 // Configure devserver
 const configDevServer = () => {
     return {
-        host: '10.0.128.183',
+        public: settings.devServerConfig.public(),
         contentBase: path.join(__dirname, './'),
         compress: true,
-        port: 3000,
+        host: settings.devServerConfig.host(),
+        port: settings.devServerConfig.port(),
+        https: !!parseInt(settings.devServerConfig.https()),
         inline: true,
+        quiet: true,
         hot: true,
-        disableHostCheck: true
-        // public: settings.devServerConfig.public(),
-        // contentBase: path.join(__dirname, './'),
-        // compress: true,
-        // host: settings.devServerConfig.host(),
-        // port: settings.devServerConfig.port(),
-        // https: !!parseInt(settings.devServerConfig.https()),
-        // inline: true,
-        // quiet: true,
-        // hot: true,
-        // hotOnly: true,
-        // overlay: true,
+        hotOnly: true,
+        overlay: true,
         // stats: 'errors-only',
-        // watchOptions: {
-        //     poll: !!parseInt(settings.devServerConfig.poll())
-        // },
-        // headers: {
-        //     'Access-Control-Allow-Origin': '*'
-        // }
+        watchOptions: {
+            poll: !!parseInt(settings.devServerConfig.poll())
+        },
+        headers: {
+            'Access-Control-Allow-Origin': '*'
+        },
+        before: (app, server) => {
+            const watcher = sane(path.join(__dirname, './'), {
+                glob: ['index.ejs'],
+                poll: !!parseInt(settings.devServerConfig.poll()),
+            });
+            watcher.on('change', function(filePath, root, stat) {
+                console.log('File modified:', filePath);
+                server.sockWrite(server.sockets, "content-changed");
+            });
+        }
     };
 };
 
@@ -106,7 +110,6 @@ const configHtml = () => {
     return {
         filename: './index.html',
         template: 'index.ejs',
-        // template: 'ejs-render-loader!index.ejs',
         inject: false,
         hash: false,
         minify: {

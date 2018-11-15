@@ -14,7 +14,13 @@ module.exports = {
             img: './src/img/'
         },
         dist: {
-            base: './dist/'
+            base: './dist/',
+            clean: [
+                "./img",
+                "./criticalcss",
+                "./css",
+                "./js"
+            ]
         }
     },
     urls: {

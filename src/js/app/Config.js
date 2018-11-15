@@ -57,4 +57,4 @@ Config.pageImgs = {
     ]
 };
 
-module.exports = Config;
+export default Config
